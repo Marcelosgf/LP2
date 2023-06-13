@@ -11,10 +11,18 @@ public class Jogos implements Serializable {
 	private String nome;
 	private String plataforma;
 	private String genero;
-	private Double preco;
+	private int preco;
 	
 	
 	public Jogos(){
+	}
+	
+	public Jogos(Integer id_jogos, String nome, String plataforma, String genero, int preco) {
+		this.id_jogos = id_jogos;
+		this.nome = nome;
+		this.plataforma = plataforma;
+		this.genero = genero;
+		this.preco = preco;
 	}
 
 	public Integer getId_jogos() {
@@ -49,11 +57,11 @@ public class Jogos implements Serializable {
 		this.genero = genero;
 	}
 
-	public Double getPreco() {
+	public int getPreco() {
 		return preco;
 	}
 
-	public void setPreco(Double preco) {
+	public void setPreco(int preco) {
 		this.preco = preco;
 	}
 
@@ -76,8 +84,7 @@ public class Jogos implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "jogos [id_jogos=" + id_jogos + ", nome=" + nome + ", plataforma=" + plataforma + ", genero=" + genero
-				+ ", preco=" + preco + "]";
+		return "ID DO JOGO: " + id_jogos + "\nNOME DO JOGO: " + nome + "\nPLATAFORMA DO JOGO: " + plataforma + "\nGENERO DO JOGO: " + genero + "\nPREÇO DO JOGO: " + preco + "\n \n";
 	}
 	
 	

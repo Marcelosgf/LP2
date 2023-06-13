@@ -7,7 +7,7 @@ public class Clientes implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Integer Id_cliente;
+	private Integer id_cliente;
 	private String nome;
 	private String telefone;
 	private String email;
@@ -17,18 +17,18 @@ public class Clientes implements Serializable {
 	}
 		
 	public Clientes(Integer id_cliente, String nome, String telefone, String email) {
-		Id_cliente = id_cliente;
+		this.id_cliente = id_cliente;
 		this.nome = nome;
 		this.telefone = telefone;
 		this.email = email;
 	}
 
 	public Integer getId_cliente() {
-		return Id_cliente;
+		return id_cliente;
 	}
 
 	public void setId_cliente(Integer id_cliente) {
-		Id_cliente = id_cliente;
+		this.id_cliente = id_cliente;
 	}
 
 	public String getNome() {
@@ -57,7 +57,7 @@ public class Clientes implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(Id_cliente);
+		return Objects.hash(id_cliente);
 	}
 
 	@Override
@@ -69,12 +69,15 @@ public class Clientes implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Clientes other = (Clientes) obj;
-		return Objects.equals(Id_cliente, other.Id_cliente);
+		return Objects.equals(id_cliente, other.id_cliente);
 	}
 	
 	@Override
 	public String toString() {
-		return " ID DO CLIENTE: " + Id_cliente + "\n NOME DO CLIENTE: " + nome + "\n TELEFONE DO CLIENTE: " + telefone + "\n EMAIL DO CLIENTE: " + email + "\n ======================= \n";
+
+		return " ID DO CLIENTE: " + id_cliente + "\n NOME DO CLIENTE: " + nome + "\n TELEFONE DO CLIENTE: " + telefone + "\n EMAIL DO CLIENTE: " + email + "\n  \n";
 	}
+	
+	
 	
 }

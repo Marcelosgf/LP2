@@ -8,28 +8,29 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import Entidades.Clientes;
-import dao.clientesDAO;
+import Entidades.Jogos;
+import dao.JogosDAO;
 import db.DB;
 import db.DbException;
 
-
-public class ClienteDaoJDBC implements clientesDAO {
+public class JogosDaoJDBC implements JogosDAO{
+	
 	private Connection conn;
 	
-	public ClienteDaoJDBC(Connection conn) {
+	public JogosDaoJDBC(Connection conn) {
 		this.conn = conn;
 	}
 	
 	@Override
-	public void insert(Clientes clientes) {
+	public void insert(Jogos jogos) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO clientes " + "(Nome, telefone, email) " + "VALUES (?, ?, ?)",
+			st = conn.prepareStatement("INSERT INTO jogos " + "(Nome, plataforma, genero, preco) " + "VALUES (?, ?, ?, ?) ",
 			Statement.RETURN_GENERATED_KEYS); 
-			st.setString(1, clientes.getNome());
-			st.setString(2, clientes.getTelefone());
-			st.setString(3, clientes.getEmail());
+			st.setString(1, jogos.getNome());
+			st.setString(2, jogos.getPlataforma());
+			st.setString(3, jogos.getGenero());
+			st.setInt(4, jogos.getPreco());
 			
 			int linhasAfetadas = st.executeUpdate();
 			
@@ -37,7 +38,7 @@ public class ClienteDaoJDBC implements clientesDAO {
 				ResultSet rs = st.getGeneratedKeys();
 				if (rs.next()) {
 					int id = rs.getInt(1);
-					clientes.setId_cliente(id);
+					jogos.setId_jogos(id);
 				}
 				DB.closeResultSet(rs);
 			}
@@ -51,17 +52,20 @@ public class ClienteDaoJDBC implements clientesDAO {
 		finally {
 			DB.closeStatement(st);
 		}
+		
 	}
+
 	
-	@Override
-	public void update(Clientes clientes) {
+	public void update(Jogos jogos) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE clientes " + "SET nome = ?, telefone = ?, email = ? " + "WHERE id_cliente = ? "); 
-			st.setString(1, clientes.getNome());
-			st.setString(2, clientes.getTelefone());
-			st.setString(3, clientes.getEmail());
-			st.setInt(4, clientes.getId_cliente());
+			st = conn.prepareStatement("UPDATE jogos " + "SET Nome = ?, Plataforma = ?, Genero = ?, Preco = ? " + "WHERE id_jogos = ? "); 
+			
+			st.setString(1, jogos.getNome());
+			st.setString(2, jogos.getPlataforma());
+			st.setString(3, jogos.getGenero());
+			st.setInt(4, jogos.getPreco());
+			st.setInt(5, jogos.getId_jogos());
 			st.executeUpdate();
 		}
 		catch (SQLException e) {
@@ -71,12 +75,13 @@ public class ClienteDaoJDBC implements clientesDAO {
 			DB.closeStatement(st);
 		}	
 	}
-	
+
 	@Override
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("DELETE FROM clientes " + "WHERE id_cliente = ?"); 
+			st = conn.prepareStatement("DELETE FROM jogos " + "WHERE id_jogos = ? "); 
+			
 			st.setInt(1, id);
 			int linhasAfetadas = st.executeUpdate();
 			if (linhasAfetadas == 0) {
@@ -91,21 +96,46 @@ public class ClienteDaoJDBC implements clientesDAO {
 		}
 	}
 	
-	@Override
-	public List<Clientes> findAll() {
+	
+	public Jogos findById(Integer id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT * " + "FROM clientes");
+					"SELECT * "	+ "FROM jogos " + " WHERE id_jogos = ? ");
+			st.setInt(1,id);
+			rs = st.executeQuery();
+			if (rs.next()) {
+
+				Jogos jogos = instanciaJogos(rs);
+				return jogos;
+			}
+		} 
+		catch (SQLException e){
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+		return null;
+	}
+
+	
+	public List<Jogos> findAll() {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT * " + "FROM jogos");
 			
 			rs = st.executeQuery();
 			
-			List <Clientes> lista = new ArrayList<>();
+			List <Jogos> lista = new ArrayList<>();
 			
 			while (rs.next()) {
-				Clientes clientes = instanciaClientes(rs);
-				lista.add(clientes);
+				Jogos jogos = instanciaJogos(rs);
+				lista.add(jogos);
 			}
 			return lista;
 		} 
@@ -118,38 +148,14 @@ public class ClienteDaoJDBC implements clientesDAO {
 		}
 	}
 
-	@Override
-	public Clientes findById(Integer id) {
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			st = conn.prepareStatement(
-					"SELECT * "	+ "FROM clientes " + " WHERE id_cliente = ? ");
-			st.setInt(1, id);
-			rs = st.executeQuery();
-			if (rs.next()) {
-
-				Clientes cliente = instanciaClientes(rs);
-				return cliente;
-			}
-		} 
-		catch (SQLException e){
-			throw new DbException(e.getMessage());
-		}
-		finally {
-			DB.closeStatement(st);
-			DB.closeResultSet(rs);
-		}
-		return null;
-	}
-	
-	
-	public Clientes instanciaClientes(ResultSet rs) throws SQLException {
-		Clientes clientes = new Clientes();
-		clientes.setId_cliente(rs.getInt("Id_cliente"));
-		clientes.setNome(rs.getNString("Nome"));
-		clientes.setTelefone(rs.getNString("Telefone"));
-		clientes.setEmail(rs.getNString("Email"));
-		return clientes;
+	public Jogos instanciaJogos(ResultSet rs) throws SQLException {
+		Jogos jogos = new Jogos();
+		
+		jogos.setId_jogos(rs.getInt("id_jogos"));
+		jogos.setNome(rs.getNString("Nome"));
+		jogos.setPlataforma(rs.getNString("Plataforma"));
+		jogos.setGenero(rs.getNString("Genero"));
+		jogos.setPreco(rs.getInt("Preco"));
+		return jogos;
 	}	
 }
